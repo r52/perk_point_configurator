@@ -111,7 +111,7 @@ namespace PPC
             for (std::uint16_t lev : std::views::iota(oldlevel, bound) | std::views::drop(1))
             {
                 bool matched = false;
-                logger::debug("processing level up # {}", lev);
+                logger::debug("processing level {}", lev);
 
                 for (const auto& [range, value] : config->rates)
                 {
@@ -121,14 +121,14 @@ namespace PPC
                     }
 
                     matched = true;
-                    logger::debug("level up # {} matches range({}, {})={}", lev, range.cbegin(), range.cend(), value);
+                    logger::debug("level {} matches range({}, {})={}", lev, range.cbegin(), range.cend(), value);
 
                     auto currentPerkProgress = perkState->GetPerkProgress();
                     auto pointsToAddf        = currentPerkProgress + value;
                     auto pointsToAdd         = std::floor(pointsToAddf);
                     auto leftover            = pointsToAddf - pointsToAdd;
 
-                    logger::debug("Adding {} perk points for level up # {}, remaining progress {}", (std::uint16_t) pointsToAdd, lev, leftover);
+                    logger::info("Adding {} perk points for level {}, remaining progress {}", (std::uint16_t) pointsToAdd, lev, leftover);
                     player->perkCount += (std::int8_t) pointsToAdd;
                     perkState->SetPerkProgress(leftover);
                     break;
@@ -136,7 +136,7 @@ namespace PPC
 
                 if (!matched)
                 {
-                    logger::info("no range matched for level up # {}...keeping natural perkCount increase", lev);
+                    logger::info("no range matched for level {}...keeping natural perkCount increase", lev);
                     // Restore natural increase
                     player->perkCount += 1;
                 }
