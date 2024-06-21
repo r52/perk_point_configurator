@@ -18,7 +18,7 @@ on:
         default: false
         required: false
 
-  jobs:
+jobs:
   build:
     if: github.event.pull_request.draft == false
     name: Build PPC
@@ -50,13 +50,14 @@ on:
           vcpkgJsonGlob: "vcpkg.json"
 
       - name: Configure Project
-        run: cmake `
-        --no-warn-unused-cli `
-        -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE `
-        -DCMAKE_TOOLCHAIN_FILE:STRING="vcpkg/scripts/buildsystems/vcpkg.cmake" `
-        -S./ `
-        -B./build `
-        -G "Ninja Multi-Config"
+        run: |
+          cmake `
+          --no-warn-unused-cli `
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE `
+          -DCMAKE_TOOLCHAIN_FILE:STRING="vcpkg/scripts/buildsystems/vcpkg.cmake" `
+          -S./ `
+          -B./build `
+          -G "Ninja Multi-Config"
 
       - name: Build Project
         run: cmake --build ./build --config Release --target all --
