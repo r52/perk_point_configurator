@@ -27,7 +27,6 @@ jobs:
       CC: cl.exe
       CXX: cl.exe
       vcpkg_baseline: f7423ee180c4b7f40d43402c2feb3859161ef625
-      VCPKG_TARGET_TRIPLET: x64-windows-static-md
       VCPKG_DEFAULT_TRIPLET: x64-windows-static-md
       VCPKG_INSTALLATION_ROOT: ./vcpkg/
 
@@ -47,7 +46,6 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: ${{ env.vcpkg_baseline }}
-          runVcpkgInstall: true
           vcpkgJsonGlob: "vcpkg.json"
 
       - name: Configure Project
@@ -56,6 +54,7 @@ jobs:
           --no-warn-unused-cli `
           -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE `
           -DCMAKE_TOOLCHAIN_FILE:STRING="vcpkg/scripts/buildsystems/vcpkg.cmake" `
+          -DVCPKG_TARGET_TRIPLET:STRING=${{ env.VCPKG_DEFAULT_TRIPLET }} `
           -S./ `
           -B./build `
           -G "Ninja Multi-Config"
