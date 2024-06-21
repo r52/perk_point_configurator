@@ -28,6 +28,7 @@ jobs:
       CXX: cl.exe
       vcpkg_baseline: f7423ee180c4b7f40d43402c2feb3859161ef625
       VCPKG_TARGET_TRIPLET: x64-windows-static-md
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static-md
       VCPKG_INSTALLATION_ROOT: ./vcpkg/
 
     steps:
