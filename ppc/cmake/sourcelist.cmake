@@ -1,0 +1,9 @@
+set(SOURCES
+	src/PCH.h
+	src/main.cpp
+	src/event.h
+	src/event.cpp
+	src/config.h
+	src/config.cpp
+	src/util.h
+)

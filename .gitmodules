@@ -1,0 +1,4 @@
+[submodule "CommonLibF4"]
+	path = CommonLibF4
+	url = https://github.com/r52/CommonLibF4.git
+	branch = fix

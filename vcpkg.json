@@ -1,0 +1,14 @@
+{
+  "name": "ppc",
+  "version-string": "1.0.0",
+  "description": "Configurable perk points",
+  "homepage": "https://github.com/r52/perk_point_configurator",
+  "license": "MIT",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "fmt",
+    "rsm-mmio",
+    "spdlog",
+    "pulzed-mini"
+  ]
+}
