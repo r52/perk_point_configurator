@@ -54,9 +54,10 @@ namespace PPC
     private:
         PerkState() = default;
 
-        std::uint16_t _level;
-        std::int8_t   _perkCount;
-        float         _perkProgress;
+        // New game defaults
+        std::uint16_t _level        = 1;
+        std::int8_t   _perkCount    = 0;
+        float         _perkProgress = 0.0f;
     };
 
     class PerkPointEventSink : public RE::BSTEventSink<RE::PerkPointIncreaseEvent>
