@@ -45,7 +45,7 @@ namespace PPC
                         continue;
                     }
 
-                    logger::debug("registering range({}, {}) = {}", low, high, rate);
+                    logger::info("registering range({}, {}) = {}", low, high, rate);
                     rates.insert_or_assign(Range((std::uint16_t) low, (std::uint16_t) high), rate);
                 }
             }

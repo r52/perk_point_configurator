@@ -33,7 +33,7 @@ namespace PPC
 
         void SetState(const std::uint16_t& level, const std::int8_t& perkCount)
         {
-            logger::debug("Saving PlayerCharacter state: Level {}, perk count {}", level, perkCount);
+            logger::info("Saving PlayerCharacter state: Level {}, perk count {}", level, perkCount);
             _level     = level;
             _perkCount = perkCount;
         }
@@ -42,7 +42,7 @@ namespace PPC
 
         void SetPerkProgress(const float& progress)
         {
-            logger::debug("Saving perk progress: {}", progress);
+            logger::info("Saving perk progress: {}", progress);
             _perkProgress = progress;
         }
 
