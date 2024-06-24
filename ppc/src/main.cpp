@@ -1,5 +1,4 @@
 #include <fmt/format.h>
-#include <memory>
 #include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 

@@ -1,11 +1,12 @@
 #include "event.h"
 #include "config.h"
+#include "F4SE/Interfaces.h"
 #include "F4SE/Logger.h"
 #include "RE/Bethesda/PlayerCharacter.h"
 #include <cmath>
 #include <ranges>
 
-std::unique_ptr<PPC::PerkPointEventSink> _perkPointIncreaseSink;
+PPC::PerkPointEventSink _perkPointIncreaseSink;
 
 namespace PPC
 {
@@ -49,7 +50,9 @@ namespace PPC
     void OnRevertCallback(const F4SE::SerializationInterface*)
     {
         logger::debug("clearing serialization data");
-        PerkState::GetSingleton()->SetPerkProgress(0.0f);
+        auto perkState = PerkState::GetSingleton();
+        perkState->SetPerkProgress(0.0f);
+        perkState->SetState(1, 0);
     }
 
     void F4SEMessageHandler(F4SE::MessagingInterface::Message* msg)
@@ -64,8 +67,7 @@ namespace PPC
                     if (source)
                     {
                         logger::info("BSTGlobalEvent::EventSource<PerkPointIncreaseEvent> found! Adding sink...");
-                        _perkPointIncreaseSink.reset(new PerkPointEventSink());
-                        source->RegisterSink(_perkPointIncreaseSink.get());
+                        source->RegisterSink(&_perkPointIncreaseSink);
                     }
                     else
                     {
@@ -73,6 +75,7 @@ namespace PPC
                     }
                 }
                 break;
+            case F4SE::MessagingInterface::kNewGame:
             case F4SE::MessagingInterface::kPostLoadGame:
                 {
                     auto player = RE::PlayerCharacter::GetSingleton();
@@ -81,8 +84,8 @@ namespace PPC
                     {
                         PerkState::GetSingleton()->SetState(player);
                     }
-                    break;
                 }
+                break;
             default:
                 break;
         }
