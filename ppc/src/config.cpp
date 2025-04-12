@@ -1,6 +1,7 @@
 #include "config.h"
 
-#include <F4SE/Logger.h>
+#include <REX/REX/LOG.h>
+
 #include <string>
 
 namespace PPC
@@ -24,7 +25,7 @@ namespace PPC
 
                     if (keyParts.size() < 1 || keyParts.size() > 2)
                     {
-                        logger::warn("incorrect range value '{}', found {} parts", key, keyParts.size());
+                        REX::WARN("incorrect range value '{}', found {} parts", key, keyParts.size());
                         continue;
                     }
 
@@ -33,7 +34,7 @@ namespace PPC
 
                     if (!(low <= high))
                     {
-                        logger::warn("level range must be from low to high in '{}', low = {}, high = {}", key, low, high);
+                        REX::WARN("level range must be from low to high in '{}', low = {}, high = {}", key, low, high);
                         continue;
                     }
 
@@ -41,18 +42,18 @@ namespace PPC
 
                     if (!(rate >= 0.0f && rate < 128.0f))
                     {
-                        logger::warn("invalid perk count rate '{}', must be between 0 and 128", value);
+                        REX::WARN("invalid perk count rate '{}', must be between 0 and 128", value);
                         continue;
                     }
 
-                    logger::info("registering range({}, {}) = {}", low, high, rate);
+                    REX::INFO("registering range({}, {}) = {}", low, high, rate);
                     rates.insert_or_assign(Range((std::uint16_t) low, (std::uint16_t) high), rate);
                 }
             }
         }
         else
         {
-            logger::warn("failed to read ppc.ini");
+            REX::WARN("failed to read ppc.ini");
         }
     }
 }  // namespace PPC

@@ -5,8 +5,6 @@
   "homepage": "https://github.com/r52/perk_point_configurator",
   "license": "MIT",
   "dependencies": [
-    "boost-stl-interfaces",
-    "fmt",
     "rsm-mmio",
     "spdlog",
     "pulzed-mini"

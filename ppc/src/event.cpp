@@ -1,8 +1,10 @@
 #include "event.h"
 #include "config.h"
-#include "F4SE/Interfaces.h"
-#include "F4SE/Logger.h"
-#include "RE/Bethesda/PlayerCharacter.h"
+
+#include <F4SE/Interfaces.h>
+#include <RE/Bethesda/PlayerCharacter.h>
+#include <REX/REX/LOG.h>
+
 #include <cmath>
 #include <ranges>
 
@@ -21,7 +23,7 @@ namespace PPC
         auto perkProgress = PerkState::GetSingleton()->GetPerkProgress();
         if (a_intfc->WriteRecordData(perkProgress))
         {
-            logger::debug("wrote save data perkProgress = {}", perkProgress);
+            REX::DEBUG("wrote save data perkProgress = {}", perkProgress);
         }
     }
 
@@ -49,7 +51,7 @@ namespace PPC
 
     void OnRevertCallback(const F4SE::SerializationInterface*)
     {
-        logger::debug("clearing serialization data");
+        REX::DEBUG("clearing serialization data");
         auto perkState = PerkState::GetSingleton();
         perkState->SetPerkProgress(0.0f);
         perkState->SetState(1, 0);
@@ -62,16 +64,16 @@ namespace PPC
             case F4SE::MessagingInterface::kGameDataReady:
                 {
                     auto source = RE::PerkPointIncreaseEvent::GetEventSource();
-                    logger::debug("source = {}", fmt::ptr(source));
+                    REX::DEBUG("source = {:#010x}", reinterpret_cast<std::uintptr_t>(source));
 
                     if (source)
                     {
-                        logger::info("BSTGlobalEvent::EventSource<PerkPointIncreaseEvent> found! Adding sink...");
+                        REX::INFO("BSTGlobalEvent::EventSource<PerkPointIncreaseEvent> found! Adding sink...");
                         source->RegisterSink(&_perkPointIncreaseSink);
                     }
                     else
                     {
-                        logger::warn("RE::PerkPointIncreaseEvent::GetEventSource() failed. PPC will be inactive.");
+                        REX::WARN("RE::PerkPointIncreaseEvent::GetEventSource() failed. PPC will be inactive.");
                     }
                 }
                 break;
@@ -93,7 +95,7 @@ namespace PPC
 
     RE::BSEventNotifyControl PerkPointEventSink::ProcessEvent(const RE::PerkPointIncreaseEvent& event, RE::BSTEventSource<RE::PerkPointIncreaseEvent>*)
     {
-        logger::debug("PerkPointIncreaseEvent triggered! perkCount {}", event.perkCount);
+        REX::DEBUG("PerkPointIncreaseEvent triggered! perkCount {}", event.perkCount);
 
         auto perkState            = PerkState::GetSingleton();
         auto player               = RE::PlayerCharacter::GetSingleton();
@@ -105,16 +107,16 @@ namespace PPC
         if (event.perkCount > oldCount && currentLevel > oldlevel)
         {
             auto leveldiff = currentLevel - oldlevel;
-            logger::debug("Level increased by {}, current level {}, player->perkCount = {}", leveldiff, currentLevel, player->perkCount);
+            REX::DEBUG("Level increased by {}, current level {}, player->perkCount = {}", leveldiff, currentLevel, player->perkCount);
 
             // Offset natural increase
             player->perkCount -= (std::int8_t) leveldiff;
 
-            auto bound = (std::uint16_t)(currentLevel + 1);
+            auto bound = (std::uint16_t) (currentLevel + 1);
             for (std::uint16_t lev : std::views::iota(oldlevel, bound) | std::views::drop(1))
             {
                 bool matched = false;
-                logger::debug("processing level {}", lev);
+                REX::DEBUG("processing level {}", lev);
 
                 for (const auto& [range, value] : config->rates)
                 {
@@ -124,14 +126,14 @@ namespace PPC
                     }
 
                     matched = true;
-                    logger::debug("level {} matches range({}, {})={}", lev, range.cbegin(), range.cend(), value);
+                    REX::DEBUG("level {} matches range({}, {})={}", lev, range.cbegin(), range.cend(), value);
 
                     auto currentPerkProgress = perkState->GetPerkProgress();
                     auto pointsToAddf        = currentPerkProgress + value;
                     auto pointsToAdd         = std::floor(pointsToAddf);
                     auto leftover            = pointsToAddf - pointsToAdd;
 
-                    logger::info("Adding {} perk points for level {}, remaining progress {}", (std::uint16_t) pointsToAdd, lev, leftover);
+                    REX::DEBUG("Adding {} perk points for level {}, remaining progress {}", (std::uint16_t) pointsToAdd, lev, leftover);
                     player->perkCount += (std::int8_t) pointsToAdd;
                     perkState->SetPerkProgress(leftover);
                     break;
@@ -139,17 +141,17 @@ namespace PPC
 
                 if (!matched)
                 {
-                    logger::info("no range matched for level {}...keeping natural perkCount increase", lev);
+                    REX::DEBUG("no range matched for level {}...keeping natural perkCount increase", lev);
                     // Restore natural increase
                     player->perkCount += 1;
                 }
             }
 
-            logger::debug("New player->perkCount = {}", player->perkCount);
+            REX::DEBUG("New player->perkCount = {}", player->perkCount);
         }
         else if (currentLevel == oldlevel && event.perkCount < oldCount)
         {
-            logger::debug("Perk spent");
+            REX::DEBUG("Perk spent");
         }
         // else do nothing for any other (potential edge) cases
 

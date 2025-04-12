@@ -2,10 +2,10 @@
 
 #include <utility>
 
-#include <F4SE/Logger.h>
 #include <RE/Bethesda/BSTEvent.h>
 #include <RE/Bethesda/Events.h>
 #include <RE/Bethesda/PlayerCharacter.h>
+#include <REX/REX/LOG.h>
 
 namespace PPC
 {
@@ -20,20 +20,14 @@ namespace PPC
 
     void                           F4SEMessageHandler(F4SE::MessagingInterface::Message* msg);
 
-    class PerkState
+    class PerkState : public REX::Singleton<PerkState>
     {
     public:
-        [[nodiscard]] static PerkState* GetSingleton()
-        {
-            static PerkState singleton;
-            return &singleton;
-        }
-
         void SetState(RE::PlayerCharacter* player) { SetState((std::uint16_t) player->GetLevel(), player->perkCount); }
 
         void SetState(const std::uint16_t& level, const std::int8_t& perkCount)
         {
-            logger::info("Saving PlayerCharacter state: Level {}, perk count {}", level, perkCount);
+            REX::INFO("Saving PlayerCharacter state: Level {}, perk count {}", level, perkCount);
             _level     = level;
             _perkCount = perkCount;
         }
@@ -42,18 +36,13 @@ namespace PPC
 
         void SetPerkProgress(const float& progress)
         {
-            logger::info("Saving perk progress: {}", progress);
+            REX::INFO("Saving perk progress: {}", progress);
             _perkProgress = progress;
         }
 
         const float& GetPerkProgress() const { return _perkProgress; }
 
-        PerkState(PerkState const&)       = delete;
-        void operator= (PerkState const&) = delete;
-
     private:
-        PerkState() = default;
-
         // New game defaults
         std::uint16_t _level        = 1;
         std::int8_t   _perkCount    = 0;
