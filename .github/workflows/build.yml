@@ -26,7 +26,7 @@ jobs:
     env:
       CC: cl.exe
       CXX: cl.exe
-      vcpkg_baseline: 16e7a3eb109cde6115b1b5126449dfdf72341dfb
+      vcpkg_baseline: 8f6c15c8d74080cdd8b4a2fc5fc482f3fc97c5c3
       VCPKG_DEFAULT_TRIPLET: x64-windows-static-md
       VCPKG_INSTALLATION_ROOT: ./vcpkg/
 
@@ -92,6 +92,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
+          merge-multiple: true
           path: artifacts
       - name: Create release
         id: create_release
@@ -101,7 +102,7 @@ jobs:
           RELDATE="$(date +'%Y-%m-%d %H:%M')"
           NAME="${{ github.event.inputs.tagName }}"
           TAGNAME="${{ github.event.inputs.tagName }}"
-          gh release create "$TAGNAME" --target "main" --title "$NAME" artifacts/**/*.{zip,tar.xz,.apk}
+          gh release create "$TAGNAME" --target "main" --title "$NAME" artifacts/*.{zip,tar.xz,.7z}
           echo "tag_name=${TAGNAME}" >> $GITHUB_OUTPUT
           echo "rel_date=${RELDATE}" >> $GITHUB_OUTPUT
         env:
